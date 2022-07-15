@@ -1,0 +1,206 @@
+<script>
+//this is an example on how to import a component to this vue file
+import Marked from './components/Marked';
+
+import axios from 'axios'
+// import * as gateway from './custom_modules/discord-gateway.js';
+
+// import * as tauri from "@tauri-apps/api";
+
+// import VueMarkdown from '@adapttive/vue-markdown'
+
+
+export default {
+  name: 'App',
+
+  //I plan to use this in other projects and this release of this discord/hummus2 client thing
+  components: {
+    Marked,
+    // VueMarkdown
+  },
+
+  data: () => {
+    return {
+      chatboxcontent: undefined,
+      chatboxsendicon: "",
+
+      guildlist: [],
+      guildchannels: [],
+      selectedguild: undefined,
+      selectedchannel: undefined,
+
+      guilddata: [],
+
+      channelposition: 0,
+
+      gatewaySocket: undefined,
+
+      token: "OTkxODMyNzY5ODgyMjU1Mzcx.YqkULw.xSNZ4-5fvYTq4mm9cMEh99ysT0t8Ncm5FcpFow", 
+      messages: [],
+      servername: "x",
+      serverid: undefined,
+      channelname: undefined,
+      channelid: undefined,
+      sequencing: null,
+      heartbeat: undefined,
+      
+    }
+  },
+  methods:{
+    eventtest(){
+      if (this.chatboxcontent != null){
+        alert(this.chatboxcontent)
+      }
+      else if (this.chatboxcontent != ""){
+        alert(this.chatboxcontent)
+      }
+      else{
+        alert("there is nothing to send to this event listener")
+      }
+
+    },
+
+    sendMessage(){
+      axios.post(`https://hummus.sys42.net/api/channels/909523692261834752/messages`, {
+        "content": `${this.chatboxcontent}`,
+        "tts": false
+      }, { headers: {"authorization" : `${this.token}`}})
+      this.chatboxcontent = ""
+    },
+
+    getAvatar(){
+      return "https://hummus-stg-cdn.sys42.net/avatars/994620142638624782/e3afcf9bfc60773169062ec83ce50e23.png"
+    },
+
+    getExtension(file){
+      var extension = file.split(".").pop();
+      return extension
+    },
+    async updateMsgs(){
+      var chats = await axios.get(`https://hummus.sys42.net/api/channels/909523692261834752/messages?limit=50`, { headers: {"authorization" : `${this.token}`}})
+      this.messages = chats.data.reverse()
+    },
+    async getGuildList(){
+      // var self = this
+      this.gatewaySocket.addEventListener("message", (event) => {
+        
+        var eventdata = JSON.parse(event.data)
+        // console.log(eventdata)
+        switch(eventdata.t){
+          case 'READY':
+              
+              this.guildlist = eventdata.d.guilds
+              console.log(eventdata.d.guilds)
+              console.log(eventdata.t)
+              console.log(this.guildlist)
+              this.selectedguild = this.guildlist[0]
+              this.guildchannels = this.selectedguild.channels.sort((a, b)=>(a.position - b.position))
+              
+              this.selectedchannel = this.guildchannels[0]
+              this.servername = this.selectedguild.name
+              this.serverid = this.selectedguild.id
+              axios.get(`https://hummus.sys42.net/api/channels/${this.selectedchannel.id}/messages?limit=50`, { headers: {"authorization" : `${this.token}`}}).then((response) => {this.messages = response.data.reverse()})
+              // axios.get(`https://hummus.sys42.net/api/guilds/${this.selectedguild}/roles`, { headers: {"authorization" : `${this.token}`}}).then((response) => {console.log(response)})
+              break;
+          case 'TYPING_START':
+            console.log(`${eventdata.d.member.nick} is typing`)
+            break;
+          case 'MESSAGE_CREATE':
+            console.log(`${eventdata.d.author.username} has sent a message`)
+            break;
+          case 'MESSAGE_UPDATE':
+            console.log(`${eventdata.d.author.username} has updated a message`)
+            break;
+          case 'PRESENCE_UPDATE':
+            console.log(`User ${eventdata.d.user.username} has come/gone ${eventdata.d.status}`)
+            break;
+        }
+        
+      })    
+      
+    },
+
+    changeGuild(index){
+      this.selectedguild = this.guildlist[index]
+      this.guildchannels = this.selectedguild.channels.sort((a, b)=>(a.position - b.position))
+      
+      console.log(this.guildchannels)
+      this.servername = this.selectedguild.name
+      this.serverid = this.selectedguild.id
+
+      // this.selectedchannel = this.guildchannels[selectedchannelindex]
+
+      // axios.get(`https://hummus.sys42.net/api/channels/${this.selectedchannel.id}/messages?limit=50`, { headers: {"authorization" : `${this.token}`}}).then((response) => {this.messages = response.data.reverse()})
+
+      
+    },
+
+    changeChannel(index){
+      this.selectedchannel = this.guildchannels[index]
+
+      axios.get(`https://hummus.sys42.net/api/channels/${this.selectedchannel.id}/messages?limit=50`, { headers: {"authorization" : `${this.token}`}}).then((response) => {this.messages = response.data.reverse()})
+    }
+
+  },
+
+  watch: {
+    chatboxcontent () {
+      if (this.chatboxcontent.length == 0 || this.chatboxcontent == null){
+        this.chatboxsendicon = null
+      }
+      else{
+        this.chatboxsendicon = "mdi-send"
+      }
+    }
+  },
+
+  async created() {
+    this.gatewaySocket = new WebSocket("wss://hummus-stg-gateway.sys42.net/?v=6&encoding=json")
+    var self = this
+
+
+    this.gatewaySocket.addEventListener("open", () => {
+        self.gatewaySocket.send(JSON.stringify({
+          op: 2,
+          d: {
+            token: this.token,
+            intents: 513,
+            properties: {
+              $os: "linux",
+              $browser: "disco",
+              $device: "disco"
+            }
+          }
+
+        }))
+      })
+    this.gatewaySocket.addEventListener('message', (event) => {
+        var eventdata = JSON.parse(event.data)
+        switch(eventdata.op){
+            case 10:
+                this.sequencing = eventdata.s
+                var heartbeat = eventdata.d.heartbeat_interval
+                console.log('beat')
+                self.gatewaySocket.send(JSON.stringify({
+                    op: 1,
+                    d: this.sequencing
+                }))
+                setInterval(() => {
+                    self.gatewaySocket.send(JSON.stringify({
+                        op: 1,
+                        d: this.sequencing
+                    }))
+                }, heartbeat)
+                break;
+        }
+      });
+    
+    console.log(await this.getGuildList())
+    
+  },
+
+  mounted(){
+
+  }
+};
+</script>
