@@ -21,28 +21,7 @@ export default {
 
   data: () => {
     return {
-      chatboxcontent: undefined,
-      chatboxsendicon: "",
-
-      guildlist: [],
-      guildchannels: [],
-      selectedguild: undefined,
-      selectedchannel: undefined,
-
-      guilddata: [],
-
-      channelposition: 0,
-
-      gatewaySocket: undefined,
-
-      token: "OTkxODMyNzY5ODgyMjU1Mzcx.YqkULw.xSNZ4-5fvYTq4mm9cMEh99ysT0t8Ncm5FcpFow", 
-      messages: [],
-      servername: "x",
-      serverid: undefined,
-      channelname: undefined,
-      channelid: undefined,
-      sequencing: null,
-      heartbeat: undefined,
+      
       
     }
   },
