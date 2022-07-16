@@ -150,7 +150,15 @@
         
       </div>
       <div id="sender">
-        <div class="chatarea">welcome</div>
+        <div class="chatarea">
+
+          <button class="chatbutton"><i class="fa-solid fa-file-arrow-up" style="font-size: 18pt; color: gray;"></i></button>
+          <div class="vertical-divider"></div>
+          <button class="chatbutton"><i class="fa-solid fa-face-smile" style="font-size: 18pt; color: gray;"></i></button>
+          <div class="vertical-divider"></div>
+
+          
+        </div>
       </div>
     </div>
 
@@ -176,6 +184,35 @@
     color: white;
   }
 
+  .chatarea{
+    display: flex;
+    width: calc(100% - 6px);
+    border: solid gray 1px;
+    border-radius: 5px;
+    outline: none;
+    padding: 2px;
+    min-height: 39px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .chatbutton{
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .vertical-divider{
+    border-left: solid 1px rgb(82, 82, 82);
+  }
+
+  .chatbutton:hover{
+    background-color: rgba(0, 0, 0, 0.055);
+  }
+
+  .chatbutton:active{
+    background-color: rgba(0, 0, 0, 0.116);
+  }
 
   #guildlist{
     float: left;
@@ -253,20 +290,13 @@
 }
 
   #sender{
-    min-height: 60px;
+    min-height: 70px;
     background-color: rgb(63, 63, 63);
     padding-left: 5px;
     padding-right: 5px;
   }
 
-  .chatarea{
-    width: calc(100% - 4px);
-    border: none;
-    outline: none;
-    padding: 2px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-  }
+
 
 
 
