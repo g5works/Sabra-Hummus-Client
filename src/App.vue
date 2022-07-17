@@ -1,6 +1,9 @@
 <template>
   <div class="parent-container">
     <div id="guildlist">
+      <button class="serverbutton">
+        <img style="margin: 0; border-radius: 100px;" src="https://picsum.photos/200" height="50px"/>
+      </button>
     </div>
     <div id="channellist">
     </div>
@@ -428,6 +431,22 @@
     margin-top: 5px;
     white-space: pre-wrap; 
     overflow-wrap: break-word;
+  }
+
+  .serverbutton{
+    height: 60px;
+    width: 60px;
+    border: none;
+    box-sizing: border-box;
+    background-size: 60px 60px;
+    padding: 0;
+    padding-top: 3px;
+    background-color: transparent;
+    transition: 0.3s;
+  }
+
+  .serverbutton:hover{
+    background-color: rgba(255, 255, 255, 0.058);
   }
 </style>
 
