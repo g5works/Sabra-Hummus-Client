@@ -152,12 +152,20 @@
       <div id="sender">
         <div class="chatarea">
 
-          <button class="chatbutton"><i class="fa-solid fa-file-arrow-up" style="font-size: 18pt; color: gray;"></i></button>
+          <button class="chatbutton fa-solid fa-file-arrow-up file-send"></button>
           <div class="vertical-divider"></div>
-          <button class="chatbutton"><i class="fa-solid fa-face-smile" style="font-size: 18pt; color: gray;"></i></button>
+          <button class="chatbutton fa-solid fa-face-smile emote-list"></button>
           <div class="vertical-divider"></div>
 
-          
+
+          <div class="textbox-location">
+            <textarea placeholder="Message this channel" rows="1" class="message-area" @input="chatresize"></textarea>
+          </div>
+
+
+          <div class="vertical-divider"></div>
+          <button class="fa-solid fa-paper-plane message-send"></button>
+
         </div>
       </div>
     </div>
@@ -173,10 +181,14 @@
 <style>
   @import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
 
+  :root {
+    --item-height: 60px;
+  }
+
   html, body{
     margin: 0;
     padding: 0;
-    overflow: hidden;
+   
   }
 
   p , h1, h2, h3, h4, h5, h6, span{
@@ -184,9 +196,82 @@
     color: white;
   }
 
+  .textbox-location{
+    width: 20px;
+    flex: 1 1 auto;
+    display: flex;
+
+
+  }
+
+  .message-area{
+    align-self: center;
+    height: 60;
+    flex: 1 1 auto;
+    background-color: transparent;
+    border: none;
+    color: white;
+    font-family: 'Open Sans';
+    outline: none;
+    resize: none;
+    padding: 0px 10px;
+  }
+
+  .message-area::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  /* Track */
+  .message-area::-webkit-scrollbar-track {
+    background: #3b3b3b;
+
+  }
+
+  /* Handle */
+  .message-area::-webkit-scrollbar-thumb {
+    border-radius: 100px;
+    background: rgb(46, 46, 46);
+      border: solid 2.5px #3b3b3b;
+  }
+
+  /* Handle on hover */
+  .message-area::-webkit-scrollbar-thumb:active {
+    background: rgb(66,66,66);
+  }
+
+
+
+  .file-send, .emote-list,.message-send{
+    color: gray;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .file-send:hover {
+    color: rgb(74, 137, 255);
+    
+  }
+
+  .emote-list:hover{
+    color: rgb(255, 255, 115);
+  }
+
+  .message-send{
+    color: rgb(255, 255, 255);
+    background-color: #6b6b6b;
+    border: none;
+    border-radius: 100px;
+    width: 40px;
+    font-size: large;
+    transition: 0.3s;
+  }
+
+  .message-send:hover {
+    background-color: #7289da;
+  }
+
   .chatarea{
     display: flex;
-    width: calc(100% - 6px);
     border: solid gray 1px;
     border-radius: 5px;
     outline: none;
@@ -200,6 +285,9 @@
     background-color: transparent;
     border: none;
     border-radius: 5px;
+    
+    font-size: 18pt;
+    transition: 0.3s;
   }
 
   .vertical-divider{
@@ -245,7 +333,7 @@
   }*/
 
   #therest{
-    overflow: hidden;
+
     float: left;
     display: flex;
     flex-direction: column;
@@ -264,9 +352,6 @@
     overflow: auto;
     flex: 1 1 auto;
   }
-
-
-  /* width */
 #messages::-webkit-scrollbar {
   width: 10px;
 }
@@ -290,10 +375,10 @@
 }
 
   #sender{
-    min-height: 70px;
     background-color: rgb(63, 63, 63);
     padding-left: 5px;
     padding-right: 5px;
+    
   }
 
 
@@ -383,161 +468,19 @@ export default {
       heartbeat: undefined,
     }
   },
-  // methods:{
-  //   eventtest(){
-  //     if (this.chatboxcontent != null){
-  //       alert(this.chatboxcontent)
-  //     }
-  //     else if (this.chatboxcontent != ""){
-  //       alert(this.chatboxcontent)
-  //     }
-  //     else{
-  //       alert("there is nothing to send to this event listener")
-  //     }
+  methods: {
+    chatresize(e) {
+      e.target.style.height = 'auto'
 
-  //   },
-
-  //   sendMessage(){
-  //     axios.post(`https://hummus.sys42.net/api/channels/909523692261834752/messages`, {
-  //       "content": `${this.chatboxcontent}`,
-  //       "tts": false
-  //     }, { headers: {"authorization" : `${this.token}`}})
-  //     this.chatboxcontent = ""
-  //   },
-
-  //   getAvatar(){
-  //     return "https://hummus-stg-cdn.sys42.net/avatars/994620142638624782/e3afcf9bfc60773169062ec83ce50e23.png"
-  //   },
-
-  //   getExtension(file){
-  //     var extension = file.split(".").pop();
-  //     return extension
-  //   },
-  //   async updateMsgs(){
-  //     var chats = await axios.get(`https://hummus.sys42.net/api/channels/909523692261834752/messages?limit=50`, { headers: {"authorization" : `${this.token}`}})
-  //     this.messages = chats.data.reverse()
-  //   },
-  //   async getGuildList(){
-  //     // var self = this
-  //     this.gatewaySocket.addEventListener("message", (event) => {
-        
-  //       var eventdata = JSON.parse(event.data)
-  //       // console.log(eventdata)
-  //       switch(eventdata.t){
-  //         case 'READY':
-              
-  //             this.guildlist = eventdata.d.guilds
-  //             console.log(eventdata.d.guilds)
-  //             console.log(eventdata.t)
-  //             console.log(this.guildlist)
-  //             this.selectedguild = this.guildlist[0]
-  //             this.guildchannels = this.selectedguild.channels.sort((a, b)=>(a.position - b.position))
-              
-  //             this.selectedchannel = this.guildchannels[0]
-  //             this.servername = this.selectedguild.name
-  //             this.serverid = this.selectedguild.id
-  //             axios.get(`https://hummus.sys42.net/api/channels/${this.selectedchannel.id}/messages?limit=50`, { headers: {"authorization" : `${this.token}`}}).then((response) => {this.messages = response.data.reverse()})
-  //             // axios.get(`https://hummus.sys42.net/api/guilds/${this.selectedguild}/roles`, { headers: {"authorization" : `${this.token}`}}).then((response) => {console.log(response)})
-  //             break;
-  //         case 'TYPING_START':
-  //           console.log(`${eventdata.d.member.nick} is typing`)
-  //           break;
-  //         case 'MESSAGE_CREATE':
-  //           console.log(`${eventdata.d.author.username} has sent a message`)
-  //           break;
-  //         case 'MESSAGE_UPDATE':
-  //           console.log(`${eventdata.d.author.username} has updated a message`)
-  //           break;
-  //         case 'PRESENCE_UPDATE':
-  //           console.log(`User ${eventdata.d.user.username} has come/gone ${eventdata.d.status}`)
-  //           break;
-  //       }
-        
-  //     })    
-      
-  //   },
-
-  //   changeGuild(index){
-  //     this.selectedguild = this.guildlist[index]
-  //     this.guildchannels = this.selectedguild.channels.sort((a, b)=>(a.position - b.position))
-      
-  //     console.log(this.guildchannels)
-  //     this.servername = this.selectedguild.name
-  //     this.serverid = this.selectedguild.id
-
-  //     // this.selectedchannel = this.guildchannels[selectedchannelindex]
-
-  //     // axios.get(`https://hummus.sys42.net/api/channels/${this.selectedchannel.id}/messages?limit=50`, { headers: {"authorization" : `${this.token}`}}).then((response) => {this.messages = response.data.reverse()})
+      if (e.target.scrollHeight <= 300){
+        e.target.style.height = `${e.target.scrollHeight}px`
+      }
+      else{
+        e.target.style.height = `300px`
+      }
 
       
-  //   },
-
-  //   changeChannel(index){
-  //     this.selectedchannel = this.guildchannels[index]
-
-  //     axios.get(`https://hummus.sys42.net/api/channels/${this.selectedchannel.id}/messages?limit=50`, { headers: {"authorization" : `${this.token}`}}).then((response) => {this.messages = response.data.reverse()})
-  //   }
-
-  // },
-
-  // watch: {
-  //   chatboxcontent () {
-  //     if (this.chatboxcontent.length == 0 || this.chatboxcontent == null){
-  //       this.chatboxsendicon = null
-  //     }
-  //     else{
-  //       this.chatboxsendicon = "mdi-send"
-  //     }
-  //   }
-  // },
-
-  // async created() {
-  //   this.gatewaySocket = new WebSocket("wss://hummus-stg-gateway.sys42.net/?v=6&encoding=json")
-  //   var self = this
-
-
-  //   this.gatewaySocket.addEventListener("open", () => {
-  //       self.gatewaySocket.send(JSON.stringify({
-  //         op: 2,
-  //         d: {
-  //           token: this.token,
-  //           intents: 513,
-  //           properties: {
-  //             $os: "linux",
-  //             $browser: "disco",
-  //             $device: "disco"
-  //           }
-  //         }
-
-  //       }))
-  //     })
-  //   this.gatewaySocket.addEventListener('message', (event) => {
-  //       var eventdata = JSON.parse(event.data)
-  //       switch(eventdata.op){
-  //           case 10:
-  //               this.sequencing = eventdata.s
-  //               var heartbeat = eventdata.d.heartbeat_interval
-  //               console.log('beat')
-  //               self.gatewaySocket.send(JSON.stringify({
-  //                   op: 1,
-  //                   d: this.sequencing
-  //               }))
-  //               setInterval(() => {
-  //                   self.gatewaySocket.send(JSON.stringify({
-  //                       op: 1,
-  //                       d: this.sequencing
-  //                   }))
-  //               }, heartbeat)
-  //               break;
-  //       }
-  //     });
-    
-  //   console.log(await this.getGuildList())
-    
-  // },
-
-  // mounted(){
-
-  // }
+    }
+  }
 }
 </script>
