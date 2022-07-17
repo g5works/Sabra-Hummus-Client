@@ -1,8 +1,11 @@
 <template>
   <div class="parent-container">
     <div id="guildlist">
-      <button class="serverbutton">
-        <img style="margin: 0; border-radius: 100px;" src="https://picsum.photos/200" height="50px"/>
+      <button class="serverbutton" @click="changepostclick">
+        <img src="https://picsum.photos/200" height="50px"/>
+      </button>
+      <button class="serverbutton" @click="changepostclick">
+        <img src="https://picsum.photos/200" height="50px"/>
       </button>
     </div>
     <div id="channellist">
@@ -448,6 +451,16 @@
   .serverbutton:hover{
     background-color: rgba(255, 255, 255, 0.058);
   }
+
+  .serverbutton img{
+    margin: 0; border-radius: 100px;
+    transition: 0.3s;
+  }
+
+  .change-radius{
+    border-radius: 15px;
+  }
+
 </style>
 
 <script>
@@ -499,6 +512,9 @@ export default {
       }
 
       
+    },
+    changepostclick(e){
+      e.target.style.borderRadius = "15px"
     }
   }
 }
