@@ -1,8 +1,8 @@
 <template>
   <div class="parent-container">
     <div id="guildlist">
-      <button class="serverbutton" style="background-image: url('https://picsum.photos/200');" v-on:click="changepostclick"></button>
-      <button class="serverbutton" style="background-image: url('https://picsum.photos/200');" v-on:click="changepostclick"></button>
+      <button v-for="(guild, index) in guildlist" :key="index" class="serverbutton" :style="{backgroundImage: `url(https://hummus-stg-cdn.sys42.net/icons/${guild.id}/${guild.icon}.png)`}" @error="removeImage" v-on:click="changepostclick"><span style="font-size: 12pt;" v-if="guild.icon == null">{{abbreviate(guild.name, 4)}}</span></button>
+      
     </div>
     <div id="channellist">
        <div id="servernamebar">
@@ -348,6 +348,10 @@
     padding: 5px 5px;
     overflow: auto;
   }
+  #guildlist::-webkit-scrollbar{
+    display: none;
+  }
+
   #channellist{
     display: flex;
     float: left;
@@ -491,10 +495,10 @@
     width: 50px;
     border: none;
     box-sizing: border-box;
-    background-size: 60px 60px;
+    background-size: 50px 50px;
     padding: 0;
-    padding-top: 3px;
-    background-color: transparent;
+    margin-bottom: 5px;
+    background-color: rgba(255, 255, 255, 0.171);
     transition: 0.3s;
     border-radius: 100px;
   }
@@ -517,6 +521,7 @@
 <script>
 // import Marked from './components/Marked.vue'
 // import axios from 'axios'
+
 
 export default {
   name: 'App',
@@ -571,7 +576,29 @@ export default {
       })
       e.target.style.borderRadius = "15px"
       document.ge
+    },
+
+    abbreviate(str, length) {
+      var strabbr = str.split(" ")
+      var abbreviation = ""
+      strabbr.forEach(item => {
+        abbreviation += item.charAt(0)
+      })
+      return abbreviation.substring(0, length)
+    },
+
+    async getUserData(){
+      this.gatewaySocket.addEventListener('message', (event) => {
+        var eventdata = JSON.parse(event.data)
+        console.log(eventdata)
+        switch (eventdata.t){
+          case "READY":
+            this.guildlist = eventdata.d.guilds
+            break;
+        }
+      })
     }
+    
   },
 
 
@@ -597,7 +624,6 @@ export default {
       })
     this.gatewaySocket.addEventListener('message', (event) => {
         var eventdata = JSON.parse(event.data)
-        console.log(eventdata)
         switch(eventdata.op){
             case 10:
                 this.sequencing = eventdata.s
@@ -616,6 +642,8 @@ export default {
                 break;
         }
       });
+
+      await this.getUserData()
     
   }
 
