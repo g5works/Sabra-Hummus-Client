@@ -1,12 +1,8 @@
 <template>
   <div class="parent-container">
     <div id="guildlist">
-      <button class="serverbutton" @click="changepostclick">
-        <img src="https://picsum.photos/200" height="50px"/>
-      </button>
-      <button class="serverbutton" @click="changepostclick">
-        <img src="https://picsum.photos/200" height="50px"/>
-      </button>
+      <button class="serverbutton" style="background-image: url('https://picsum.photos/200');" v-on:click="changepostclick"></button>
+      <button class="serverbutton" style="background-image: url('https://picsum.photos/200');" v-on:click="changepostclick"></button>
     </div>
     <div id="channellist">
     </div>
@@ -313,6 +309,9 @@
     height: 100vh;
     width: 60px;
     background-color: rgb(40, 40, 40);
+    box-sizing: border-box;
+    padding: 5px 5px;
+    overflow: auto;
   }
   #channellist{
     float: left;
@@ -437,8 +436,8 @@
   }
 
   .serverbutton{
-    height: 60px;
-    width: 60px;
+    height: 50px;
+    width: 50px;
     border: none;
     box-sizing: border-box;
     background-size: 60px 60px;
@@ -446,6 +445,7 @@
     padding-top: 3px;
     background-color: transparent;
     transition: 0.3s;
+    border-radius: 100px;
   }
 
   .serverbutton:hover{
@@ -514,7 +514,13 @@ export default {
       
     },
     changepostclick(e){
+
+      const guildicons = document.querySelectorAll(".serverbutton")
+      guildicons.forEach(item => {
+        item.style.borderRadius = "30px"
+      })
       e.target.style.borderRadius = "15px"
+      document.ge
     }
   }
 }
