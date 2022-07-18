@@ -5,6 +5,14 @@
       <button class="serverbutton" style="background-image: url('https://picsum.photos/200');" v-on:click="changepostclick"></button>
     </div>
     <div id="channellist">
+       <div id="servernamebar">
+        <p style="font-size: 15pt; margin: 6px 0px; width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-right: solid 1px #9da8d1; display: inline-block">#channel-namessss</p><p style=" margin: 9px 0px; margin-left: 5px; width: calc(100% - 150px - 10px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block">#channel-namesssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p>
+      </div>
+      <div id="channels">
+        <p class="typeheader">&nbsp;&nbsp;Text Channels</p>
+        <button class="channelbutton"><i style="font-size: 14pt; margin-right: 15px;" class="far fa-hashtag"></i>general</button>
+        <p class="typeheader">&nbsp;&nbsp;Voice Channels</p>
+      </div>
     </div>
 
     
@@ -154,9 +162,9 @@
       <div id="sender">
         <div class="chatarea">
 
-          <button class="chatbutton fa-solid fa-file-arrow-up file-send"></button>
+          <button class="chatbutton file-send"><i class="fal fa-file-upload"></i></button>
           <div class="vertical-divider"></div>
-          <button class="chatbutton fa-solid fa-face-smile emote-list"></button>
+          <button class="chatbutton emote-list"><i class="fal fa-smile"></i></button>
           <div class="vertical-divider"></div>
 
 
@@ -166,13 +174,14 @@
 
 
           <div class="vertical-divider"></div>
-          <button class="fa-solid fa-paper-plane message-send"></button>
+          <button class="message-send"><i class="fas fa-paper-plane"></i></button>
 
         </div>
       </div>
     </div>
 
     <div id="memberlist">
+      <i class="fal fa-comment"></i>
     </div>
  
   </div>
@@ -193,6 +202,18 @@
    
   }
 
+  .typeheader{
+    text-transform: uppercase;
+    font-size: 9pt;
+    margin-bottom: 5px;
+    border-bottom: solid 1px gray;
+    color: gray;
+  }
+
+  button{
+    outline: none;
+  }
+
   p , h1, h2, h3, h4, h5, h6, span{
     font-family: 'Open Sans';
     color: white;
@@ -204,6 +225,21 @@
     display: flex;
 
 
+  }
+
+  .channelbutton{
+    width: 100%;
+    height: 40px;
+    text-align: left;
+    border: none;
+    color: white;
+    background-color: transparent;
+    font-family: 'Open Sans';
+    font-size: 12pt;
+  }
+
+  .channelbutton:hover{
+    background-color: rgba(0, 0, 0, 0.186);
   }
 
   .message-area{
@@ -243,10 +279,8 @@
 
 
 
-  .file-send, .emote-list,.message-send{
+  .file-send, .emote-list{
     color: gray;
-    margin-left: 5px;
-    margin-right: 5px;
   }
 
   .file-send:hover {
@@ -266,6 +300,7 @@
     width: 40px;
     font-size: large;
     transition: 0.3s;
+    margin-left: 5px;
   }
 
   .message-send:hover {
@@ -314,10 +349,13 @@
     overflow: auto;
   }
   #channellist{
+    display: flex;
     float: left;
     height: 100vh;
     width: 250px;
     background-color: rgb(50, 50, 50);
+
+    flex-direction: column;
   }
 
   #memberlist{
@@ -353,10 +391,23 @@
     padding: 5px;
   }
 
+  #servernamebar{
+    position: sticky;
+    background-color: #3c3c3c;
+    padding: 5px;
+  }
+
   #messages{
     overflow: auto;
     flex: 1 1 auto;
   }
+
+ #channels{
+    overflow: auto;
+    flex: 1 1 auto;
+    margin-top: 15px;
+  }
+
 #messages::-webkit-scrollbar {
   width: 10px;
 }
@@ -514,7 +565,6 @@ export default {
       
     },
     changepostclick(e){
-
       const guildicons = document.querySelectorAll(".serverbutton")
       guildicons.forEach(item => {
         item.style.borderRadius = "30px"
@@ -522,6 +572,53 @@ export default {
       e.target.style.borderRadius = "15px"
       document.ge
     }
+  },
+
+
+  async created(){
+     this.gatewaySocket = new WebSocket("wss://hummus-stg-gateway.sys42.net/?v=6&encoding=json")
+    var self = this
+
+
+    this.gatewaySocket.addEventListener("open", () => {
+        self.gatewaySocket.send(JSON.stringify({
+          op: 2,
+          d: {
+            token: this.token,
+            intents: 513,
+            properties: {
+              $os: "linux",
+              $browser: "disco",
+              $device: "disco"
+            }
+          }
+
+        }))
+      })
+    this.gatewaySocket.addEventListener('message', (event) => {
+        var eventdata = JSON.parse(event.data)
+        console.log(eventdata)
+        switch(eventdata.op){
+            case 10:
+                this.sequencing = eventdata.s
+                var heartbeat = eventdata.d.heartbeat_interval
+                console.log('beat')
+                self.gatewaySocket.send(JSON.stringify({
+                    op: 1,
+                    d: this.sequencing
+                }))
+                setInterval(() => {
+                    self.gatewaySocket.send(JSON.stringify({
+                        op: 1,
+                        d: this.sequencing
+                    }))
+                }, heartbeat)
+                break;
+        }
+      });
+    
   }
+
+
 }
 </script>
