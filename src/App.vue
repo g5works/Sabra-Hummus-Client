@@ -1,21 +1,20 @@
 <template>
   <div class="parent-container">
     <div id="guildlist">
-      <button v-for="(guild, index) in guildlist" :key="index" class="serverbutton" :style="{backgroundImage: `url(https://hummus-stg-cdn.sys42.net/icons/${guild.id}/${guild.icon}.png)`}" @error="removeImage" v-on:click="changepostclick"><span style="font-size: 12pt;" v-if="guild.icon == null">{{abbreviate(guild.name, 4)}}</span></button>
+      <button v-for="(guild, index) in guildlist" :key="index" class="serverbutton" :style="{backgroundImage: `url(https://hummus-stg-cdn.sys42.net/icons/${guild.id}/${guild.icon}.png)`}" v-on:click="changepostclick">{{checkforimage(guild.icon, guild.name, 4)}}</button>
       
     </div>
+
     <div id="channellist">
        <div id="servernamebar">
-        <p style="font-size: 15pt; margin: 6px 0px; width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-right: solid 1px #9da8d1; display: inline-block">#channel-namessss</p><p style=" margin: 9px 0px; margin-left: 5px; width: calc(100% - 150px - 10px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block">#channel-namesssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p>
+        <p style="font-size: 15pt; margin: 6px 0px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block">{{guildlist[selectedguild].name}}</p>
       </div>
       <div id="channels">
         <p class="typeheader">&nbsp;&nbsp;Text Channels</p>
-        <button class="channelbutton"><i style="font-size: 14pt; margin-right: 15px;" class="far fa-hashtag"></i>general</button>
+        <button class="channelbutton" v-for="(channel, index) in textchannels" :key="index"><i style="font-size: 14pt; margin-right: 15px;" class="far fa-hashtag"></i>{{channel.name}}</button>
         <p class="typeheader">&nbsp;&nbsp;Voice Channels</p>
       </div>
     </div>
-
-    
 
     <div id="therest">
       <div id="menubar">
@@ -501,6 +500,9 @@
     background-color: rgba(255, 255, 255, 0.171);
     transition: 0.3s;
     border-radius: 100px;
+    font-family: 'Open Sans';
+    color: white;
+    font-size: 12pt;
   }
 
   .serverbutton:hover{
@@ -521,6 +523,9 @@
 <script>
 // import Marked from './components/Marked.vue'
 // import axios from 'axios'
+
+
+import {_} from 'vue-underscore';
 
 
 export default {
@@ -594,11 +599,29 @@ export default {
         switch (eventdata.t){
           case "READY":
             this.guildlist = eventdata.d.guilds
+            this.guildchannels = eventdata.d.guilds[9].channels
+            this.selectedguild = 9
+            this.selectedchannel = 0
             break;
         }
       })
+    },
+
+    checkforimage(image, title, abbrcount) {
+      if(image == null){
+        return this.abbreviate(title, abbrcount)
+      }
     }
     
+  },
+
+  
+  computed: {
+    textchannels(){
+      var grouped = _.groupBy([...this.guildchannels], (array)=>{return array.type})
+      console.log(grouped)
+      return grouped
+    }
   },
 
 
