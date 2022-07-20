@@ -548,6 +548,9 @@
 
 
 import {_} from 'vue-underscore';
+import Store from 'electron-store'; 
+
+const store = new Store();
 
 
 export default {
@@ -678,7 +681,7 @@ export default {
 
 
   async created(){
-     this.gatewaySocket = new WebSocket("wss://hummus-stg-gateway.sys42.net/?v=6&encoding=json")
+    this.gatewaySocket = new WebSocket("wss://hummus-stg-gateway.sys42.net/?v=6&encoding=json")
     var self = this
 
 
@@ -718,7 +721,8 @@ export default {
         }
       });
 
-      await this.getUserData()
+    await this.getUserData()
+    store.set('oil', 'e')
     
   },
 
