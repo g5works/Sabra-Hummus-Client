@@ -1,7 +1,7 @@
 <template>
   <div class="parent-container">
     <div id="guildlist">
-      <button v-for="(guild, index) in guildlist" :key="index" class="serverbutton" :style="{backgroundImage: `url(https://hummus-stg-cdn.sys42.net/icons/${guild.id}/${guild.icon}.png)`}" v-on:click="changepostclick">{{checkforimage(guild.icon, guild.name, 4)}}</button>
+      <button v-for="(guild, index) in guildlist" :key="guild.id" class="serverbutton" :style="{backgroundImage: `url(https://hummus-stg-cdn.sys42.net/icons/${guild.id}/${guild.icon}.png)`}" v-on:click="changepostclick($event, index)">{{checkforimage(guild.icon, guild.name, 4)}}</button>
       
     </div>
 
@@ -10,9 +10,10 @@
         <p style="font-size: 15pt; margin: 6px 0px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block">{{guildlist[selectedguild].name}}</p>
       </div>
       <div id="channels">
-        <p class="typeheader">&nbsp;&nbsp;Text Channels</p>
-        <button class="channelbutton" v-for="(channel, index) in textchannels" :key="index"><i style="font-size: 14pt; margin-right: 15px;" class="far fa-hashtag"></i>{{channel.name}}</button>
-        <p class="typeheader">&nbsp;&nbsp;Voice Channels</p>
+        <p class="typeheader" v-if="textchannels.length != 0">&nbsp;&nbsp;Text Channels</p>
+        <button class="channelbutton" v-for="(channel) in textchannels" :key="channel.id"><i style="font-size: 14pt; margin-right: 15px;" class="fal fa-hashtag"></i>{{channel.name}}</button>
+        <p class="typeheader" v-if="voicechannels.length != 0">&nbsp;&nbsp;Voice Channels</p>
+        <button class="channelbutton" v-for="(channel) in voicechannels" :key="channel.id"><i style="font-size: 14pt; margin-right: 15px;" class="fal fa-microphone-stand"></i>{{channel.name}}</button>
       </div>
     </div>
 
@@ -408,8 +409,29 @@
  #channels{
     overflow: auto;
     flex: 1 1 auto;
-    margin-top: 15px;
   }
+  #channels::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+#channels::-webkit-scrollbar-track {
+  background: #3b3b3b;
+
+}
+
+/* Handle */
+#channels::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  background: rgb(46, 46, 46);
+    border: solid 2.5px #3b3b3b;
+}
+
+/* Handle on hover */
+#channels::-webkit-scrollbar-thumb:active {
+  background: rgb(66,66,66);
+}
+
 
 #messages::-webkit-scrollbar {
   width: 10px;
@@ -574,13 +596,20 @@ export default {
 
       
     },
-    changepostclick(e){
+    changepostclick(e, guildindex){
       const guildicons = document.querySelectorAll(".serverbutton")
+      console.log(document.querySelectorAll(".serverbutton"))
       guildicons.forEach(item => {
         item.style.borderRadius = "30px"
       })
       e.target.style.borderRadius = "15px"
-      document.ge
+
+      this.selectedguild = guildindex
+      this.guildchannels = this.guildlist[this.selectedguild].channels
+
+
+
+      // document.ge
     },
 
     abbreviate(str, length) {
@@ -599,9 +628,11 @@ export default {
         switch (eventdata.t){
           case "READY":
             this.guildlist = eventdata.d.guilds
-            this.guildchannels = eventdata.d.guilds[9].channels
-            this.selectedguild = 9
+            this.selectedguild = 0
+            this.guildchannels = this.guildlist[this.selectedguild].channels
+
             this.selectedchannel = 0
+            
             break;
         }
       })
@@ -620,8 +651,29 @@ export default {
     textchannels(){
       var grouped = _.groupBy([...this.guildchannels], (array)=>{return array.type})
       console.log(grouped)
-      return grouped
-    }
+      if (grouped[0] == null){
+        return []
+      }
+
+      else {
+        return grouped[0].sort((a, b) => {return a.position - b.position})
+      }
+    },
+
+    voicechannels(){
+      var grouped = _.groupBy([...this.guildchannels], (array)=>{return array.type})
+      console.log(grouped)
+
+      if (grouped[2] == null){
+        return []
+      }
+
+      else {
+        return grouped[2].sort((a, b) => {return a.position - b.position})
+      }
+
+    } 
+
   },
 
 
@@ -668,6 +720,10 @@ export default {
 
       await this.getUserData()
     
+  },
+
+  updated() {
+    console.log(document.querySelectorAll(".serverbutton")[this.selectedguild].style.borderRadius = '15px')
   }
 
 
