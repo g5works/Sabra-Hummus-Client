@@ -1,7 +1,7 @@
 <template>
   <div class="parent-container">
     <div id="guildlist">
-      <button v-for="(guild, index) in guildlist" :key="guild.id" class="serverbutton" :style="{backgroundImage: `url(https://hummus-stg-cdn.sys42.net/icons/${guild.id}/${guild.icon}.png)`}" v-on:click="changepostclick($event, index)">{{checkforimage(guild.icon, guild.name, 4)}}</button>
+      <button v-for="(guild, index) in guildlist" :key="guild.id" class="serverbutton" :style="{backgroundImage: `url(https://hummus-stg-cdn.sys42.net/icons/${guild.id}/${guild.icon}.png)`}" v-on:click="serverchanger($event, index)">{{checkforimage(guild.icon, guild.name, 4)}}</button>
       
     </div>
 
@@ -11,15 +11,15 @@
       </div>
       <div id="channels">
         <p class="typeheader" v-if="textchannels.length != 0">&nbsp;&nbsp;Text Channels</p>
-        <button class="channelbutton" v-for="(channel) in textchannels" :key="channel.id"><i style="font-size: 14pt; margin-right: 15px;" class="fal fa-hashtag"></i>{{channel.name}}</button>
+        <button class="channelbutton" v-for="(channel, index) in textchannels" :key="channel.id" @click="changechannel(index)" style="border-left: solid 3px transparent;"><i style="font-size: 14pt; margin-right: 15px;" class="fal fa-hashtag"></i>{{channel.name}}</button>
         <p class="typeheader" v-if="voicechannels.length != 0">&nbsp;&nbsp;Voice Channels</p>
-        <button class="channelbutton" v-for="(channel) in voicechannels" :key="channel.id"><i style="font-size: 14pt; margin-right: 15px;" class="fal fa-microphone-stand"></i>{{channel.name}}</button>
+        <button class="channelbutton" v-for="(channel) in voicechannels" :key="channel.id" style="border-left: solid 3px transparent;"><i style="font-size: 14pt; margin-right: 15px;" class="fal fa-microphone-stand"></i>{{channel.name}}</button>
       </div>
     </div>
 
     <div id="therest">
       <div id="menubar">
-        <p style="font-size: 15pt; margin: 6px 0px; width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-right: solid 1px #9da8d1; display: inline-block">#channel-namessss</p><p style=" margin: 9px 0px; margin-left: 5px; width: calc(100% - 150px - 10px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block">#channel-namesssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</p>
+        <p style="font-size: 15pt; margin: 6px 0px; width: 150px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-right: solid 1px #9da8d1; display: inline-block"><i class="far fa-hashtag"></i>&nbsp;{{textchannels[selectedchannel].name}}</p><p style=" margin: 9px 0px; margin-left: 5px; width: calc(100% - 250px - 10px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: inline-block">{{textchannels[selectedchannel].topic}}</p>
       </div>
       <div id="messages">
         <div class="messagebody">
@@ -539,16 +539,16 @@
   .change-radius{
     border-radius: 15px;
   }
-
 </style>
 
-<script>
+<script lang="js">
 // import Marked from './components/Marked.vue'
 // import axios from 'axios'
 
 
-import {_} from 'vue-underscore';
-
+import _ from 'underscore';
+import { Store } from 'tauri-plugin-store-api';
+const store = new Store('.settings.dat');
 
 export default {
   name: 'App',
@@ -564,8 +564,8 @@ export default {
 
       guildlist: [],
       guildchannels: [],
-      selectedguild: undefined,
-      selectedchannel: undefined,
+      selectedguild: 0,
+      selectedchannel: 0,
 
       guilddata: [],
 
@@ -596,7 +596,23 @@ export default {
 
       
     },
-    changepostclick(e, guildindex){
+
+    changechannel(channelindex){
+      var channels = document.querySelectorAll(".channelbutton")
+      
+      channels.forEach(item => {
+        item.style.backgroundColor = 'transparent'
+        item.style.borderLeft = 'solid 3px transparent'
+      })
+
+      channels[channelindex].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
+      channels[channelindex].style.borderLeft = 'solid 3px orange'
+      this.selectedchannel = channelindex
+
+      // style="background-color: ; border-left: solid 3px orange"
+    },
+
+    serverchanger(e, guildindex){
       const guildicons = document.querySelectorAll(".serverbutton")
       console.log(document.querySelectorAll(".serverbutton"))
       guildicons.forEach(item => {
@@ -606,7 +622,10 @@ export default {
 
       this.selectedguild = guildindex
       this.guildchannels = this.guildlist[this.selectedguild].channels
-
+      store.set('selectedguild', this.selectedguild)
+      store.get('selectedguild').then((response)=>{
+        console.log(response)
+      })
 
 
       // document.ge
@@ -622,13 +641,14 @@ export default {
     },
 
     async getUserData(){
-      this.gatewaySocket.addEventListener('message', (event) => {
+      this.gatewaySocket.addEventListener('message', async (event) => {
         var eventdata = JSON.parse(event.data)
         console.log(eventdata)
         switch (eventdata.t){
           case "READY":
             this.guildlist = eventdata.d.guilds
-            this.selectedguild = 0
+            // this.selectedguild = await store.get('selectedguild')
+            this.selectedguild = await store.get('selectedguild')
             this.guildchannels = this.guildlist[this.selectedguild].channels
 
             this.selectedchannel = 0
@@ -719,11 +739,16 @@ export default {
       });
 
     await this.getUserData()
+
     
   },
 
   updated() {
-    console.log(document.querySelectorAll(".serverbutton")[this.selectedguild].style.borderRadius = '15px')
+    var guildicons = document.querySelectorAll(".serverbutton")
+    guildicons.forEach(item => {
+        item.style.borderRadius = "30px"
+    })
+    console.log(guildicons[this.selectedguild].style.borderRadius = '15px')
   }
 
 
