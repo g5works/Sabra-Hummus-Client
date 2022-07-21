@@ -548,9 +548,6 @@
 
 
 import {_} from 'vue-underscore';
-import Store from 'electron-store'; 
-
-const store = new Store();
 
 
 export default {
@@ -722,7 +719,6 @@ export default {
       });
 
     await this.getUserData()
-    store.set('oil', 'e')
     
   },
 
