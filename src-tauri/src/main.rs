@@ -3,11 +3,12 @@
   windows_subsystem = "windows"
 )]
 
-use tauri_plugin_store::PluginBuilder;
+use tauri_plugin_store::{PluginBuilder};
 
 fn main() {
+
   tauri::Builder::default()
     .plugin(PluginBuilder::default().build())
     .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+    .expect("failed to run app");
 }
