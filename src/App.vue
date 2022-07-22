@@ -751,6 +751,8 @@ export default {
       store.set('selectedserver', guildindex)
       store.save()
 
+      store.load()
+
       this.selectedguild = guildindex
       this.guildchannels = this.guildlist[this.selectedguild].channels
       this.selectedchannel = 0
@@ -771,6 +773,8 @@ export default {
               store.save()
               console.log('store load error')
             }
+            
+
             
             await store.load()
             this.selectedguild = await store.get("selectedserver")
@@ -879,9 +883,8 @@ export default {
       })
     channels[this.selectedchannel].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
     channels[this.selectedchannel].style.borderLeft = 'solid 3px orange'
-    
-
     console.log(guildicons[this.selectedguild].style.borderRadius = '15px')
+    // store.clear()
   }
 
 
