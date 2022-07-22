@@ -669,8 +669,8 @@ span {
 
 
 import _ from 'underscore';
-import { Store } from 'tauri-plugin-store-api';
-const store = new Store('.settings.dat');
+// import { Store } from 'tauri-plugin-store-api';
+// const store = new Store('.settings.dat');
 
 export default {
   name: 'App',
@@ -736,7 +736,6 @@ export default {
 
     async serverchanger(e, guildindex){
       const guildicons = document.querySelectorAll(".serverbutton")
-      console.log(document.querySelectorAll(".serverbutton"))
       guildicons.forEach(item => {
         item.style.borderRadius = "30px"
       })
@@ -744,18 +743,6 @@ export default {
 
       this.selectedguild = guildindex
       this.guildchannels = this.guildlist[this.selectedguild].channels
-      if (!await store.get(`guild${this.guildlist[this.selectedguild].id}`)) {
-        await store.load()
-        await store.set(`guild${this.guildlist[this.selectedguild].id}`, 0)
-      }
-      store.set('selectedguild', this.selectedguild)
-      store.get('selectedguild').then((response)=>{
-        console.log(response)
-      })
-
-
-
-      await store.save()
     },
 
     abbreviate(str, length) {
@@ -775,11 +762,9 @@ export default {
           case "READY":
             this.guildlist = eventdata.d.guilds
             // this.selectedguild = await store.get('selectedguild')
-            this.selectedguild = await store.get('selectedguild')
+            this.selectedguild = 0
             this.guildchannels = this.guildlist[this.selectedguild].channels
-
-
-
+            // store.load()
             this.selectedchannel = 0
 
             break;
@@ -830,11 +815,6 @@ export default {
     this.gatewaySocket = new WebSocket("wss://hummus-stg-gateway.sys42.net/?v=6&encoding=json")
     var self = this
 
-    if (! await store.get('selectedguild')) {
-      store.set('selectedguild', this.selectedguild)
-      store.save()
-    }
-
 
 
     this.gatewaySocket.addEventListener("open", () => {
@@ -884,7 +864,6 @@ export default {
         item.style.borderRadius = "30px"
     })
     console.log(guildicons[this.selectedguild].style.borderRadius = '15px')
-    store.clear()
   }
 
 
