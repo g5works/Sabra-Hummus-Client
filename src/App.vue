@@ -751,7 +751,7 @@ export default {
       store.set('selectedserver', guildindex)
       store.save()
 
-      store.load()
+      console.log( await store.has(`guild${this.guildlist[guildindex].id}`))
 
       this.selectedguild = guildindex
       this.guildchannels = this.guildlist[this.selectedguild].channels
@@ -761,17 +761,15 @@ export default {
     async getUserData(){
       this.gatewaySocket.addEventListener('message', async (event) => {
         var eventdata = JSON.parse(event.data)
-        console.log(eventdata)
         switch (eventdata.t){
           case "READY":
             this.guildlist = eventdata.d.guilds
 
             store.load();
-            if (!await store.get("selectedserver")) {
+            if (await !store.has("selectedserver")) {
               store.load()
               store.set("selectedserver", 0)
               store.save()
-              console.log('store load error')
             }
             
 
@@ -797,7 +795,6 @@ export default {
   computed: {
     textchannels(){
       var grouped = _.groupBy([...this.guildchannels], (array)=>{return array.type})
-      console.log(grouped)
       if (grouped[0] == null){
         return []
       }
@@ -809,7 +806,6 @@ export default {
 
     voicechannels(){
       var grouped = _.groupBy([...this.guildchannels], (array)=>{return array.type})
-      console.log(grouped)
 
       if (grouped[2] == null){
         return []
@@ -883,7 +879,7 @@ export default {
       })
     channels[this.selectedchannel].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
     channels[this.selectedchannel].style.borderLeft = 'solid 3px orange'
-    console.log(guildicons[this.selectedguild].style.borderRadius = '15px')
+    guildicons[this.selectedguild].style.borderRadius = '15px'
     // store.clear()
   }
 
