@@ -669,8 +669,8 @@ span {
 
 
 import _ from 'underscore';
-// import { Store } from 'tauri-plugin-store-api';
-// const store = new Store('.settings.dat');
+import { Store } from 'tauri-plugin-store-api';
+const store = new Store('.settings.dat');
 
 export default {
   name: 'App',
@@ -719,6 +719,15 @@ export default {
 
     },
 
+    abbreviate(str, length) {
+      var strabbr = str.split(" ")
+      var abbreviation = ""
+      strabbr.forEach(item => {
+        abbreviation += item.charAt(0)
+      })
+      return abbreviation.substring(0, length)
+    },
+
     async changechannel(channelindex){
       var channels = document.querySelectorAll(".channelbutton")
 
@@ -729,9 +738,6 @@ export default {
       this.selectedchannel = channelindex
       channels[this.selectedchannel].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
       channels[this.selectedchannel].style.borderLeft = 'solid 3px orange'
-      
-
-      // style="background-color: ; border-left: solid 3px orange"
     },
 
     async serverchanger(e, guildindex){
@@ -741,17 +747,13 @@ export default {
       })
       e.target.style.borderRadius = "15px"
 
+      store.load()
+      store.set('selectedserver', guildindex)
+      store.save()
+
       this.selectedguild = guildindex
       this.guildchannels = this.guildlist[this.selectedguild].channels
-    },
-
-    abbreviate(str, length) {
-      var strabbr = str.split(" ")
-      var abbreviation = ""
-      strabbr.forEach(item => {
-        abbreviation += item.charAt(0)
-      })
-      return abbreviation.substring(0, length)
+      this.selectedchannel = 0
     },
 
     async getUserData(){
@@ -761,12 +763,19 @@ export default {
         switch (eventdata.t){
           case "READY":
             this.guildlist = eventdata.d.guilds
-            // this.selectedguild = await store.get('selectedguild')
-            this.selectedguild = 0
-            this.guildchannels = this.guildlist[this.selectedguild].channels
-            // store.load()
-            this.selectedchannel = 0
 
+            store.load();
+            if (!await store.get("selectedserver")) {
+              store.load()
+              store.set("selectedserver", 0)
+              store.save()
+              console.log('store load error')
+            }
+            
+            await store.load()
+            this.selectedguild = await store.get("selectedserver")
+            this.guildchannels = this.guildlist[this.selectedguild].channels
+            this.selectedchannel = 0
             break;
         }
       })
@@ -860,9 +869,18 @@ export default {
 
   updated() {
     var guildicons = document.querySelectorAll(".serverbutton")
+    var channels = document.querySelectorAll(".channelbutton")
     guildicons.forEach(item => {
         item.style.borderRadius = "30px"
     })
+    channels.forEach(item => {
+        item.style.backgroundColor = 'transparent'
+        item.style.borderLeft = 'solid 3px transparent'
+      })
+    channels[this.selectedchannel].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
+    channels[this.selectedchannel].style.borderLeft = 'solid 3px orange'
+    
+
     console.log(guildicons[this.selectedguild].style.borderRadius = '15px')
   }
 
