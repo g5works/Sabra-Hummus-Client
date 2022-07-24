@@ -2,13 +2,13 @@
   all(not(debug_assertions), target_os = "windows"),
   windows_subsystem = "windows"
 )]
+#![allow(non_snake_case)]
 
-use tauri_plugin_store::{PluginBuilder};
+use tauri_plugin_fs_extra::FsExtra;
 
 fn main() {
-
-  tauri::Builder::default()
-    .plugin(PluginBuilder::default().build())
-    .run(tauri::generate_context!())
-    .expect("failed to run app");
+    tauri::Builder::default()
+        .plugin(FsExtra::default())
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

@@ -19,6 +19,7 @@
     "core-js": "^3.8.3",
     "lodash": "^4.17.21",
     "marked": "^4.0.18",
+    "tauri-plugin-fs-extra-api": "github:tauri-apps/tauri-plugin-fs-extra",
     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store",
     "underscore": "^1.13.4",
     "vue": "^2.6.14"

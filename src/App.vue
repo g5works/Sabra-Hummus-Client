@@ -669,8 +669,8 @@ span {
 
 
 import _ from 'underscore';
-import { Store } from 'tauri-plugin-store-api';
-const store = new Store('.settings.dat');
+// import { exists } from 'tauri-plugin-fs-extra-api'
+// await exists('/path/to/file')
 
 export default {
   name: 'App',
@@ -747,12 +747,6 @@ export default {
       })
       e.target.style.borderRadius = "15px"
 
-      store.load()
-      store.set('selectedserver', guildindex)
-      store.save()
-
-      console.log( await store.has(`guild${this.guildlist[guildindex].id}`))
-
       this.selectedguild = guildindex
       this.guildchannels = this.guildlist[this.selectedguild].channels
       this.selectedchannel = 0
@@ -764,21 +758,9 @@ export default {
         switch (eventdata.t){
           case "READY":
             this.guildlist = eventdata.d.guilds
-
-            store.load();
-            if (await !store.has("selectedserver")) {
-              store.load()
-              store.set("selectedserver", 0)
-              store.save()
-            }
-            
-
-            
-            await store.load()
-            this.selectedguild = await store.get("selectedserver")
+            this.selectedguild = 0
             this.guildchannels = this.guildlist[this.selectedguild].channels
             this.selectedchannel = 0
-            break;
         }
       })
     },
@@ -880,7 +862,6 @@ export default {
     channels[this.selectedchannel].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
     channels[this.selectedchannel].style.borderLeft = 'solid 3px orange'
     guildicons[this.selectedguild].style.borderRadius = '15px'
-    // store.clear()
   }
 
 

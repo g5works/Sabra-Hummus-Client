@@ -61,7 +61,7 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
- "tauri-plugin-store",
+ "tauri-plugin-fs-extra",
 ]
 
 [[package]]
@@ -2849,13 +2849,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "tauri-plugin-store"
+name = "tauri-plugin-fs-extra"
 version = "0.0.0"
-source = "git+https://github.com/tauri-apps/tauri-plugin-store#9e3732e0cf53b72ced6903583660cd7c5f756781"
+source = "git+https://github.com/tauri-apps/tauri-plugin-fs-extra#0bafb6d596c78e23100c5f97d8b317cb3bcb5c32"
 dependencies = [
- "log",
  "serde",
- "serde_json",
  "tauri",
  "thiserror",
 ]
