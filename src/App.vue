@@ -39,7 +39,7 @@
           v-for="(channel, index) in textchannels"
           :key="channel.id"
           @click="changechannel(index)"
-          style="border-left: solid 3px transparent"
+          style="border-left: solid 3px transparent;"
         >
           <i style="font-size: 14pt; margin-right: 15px" class="fal fa-hashtag"></i
           >{{ channel.name }}
@@ -68,15 +68,16 @@
           style="
             font-size: 15pt;
             margin: 6px 0px;
-            width: 150px;
+            padding-right: 5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             border-right: solid 1px #9da8d1;
             display: inline-block;
+            max-width: 250px;
           "
         >
-          <i class="far fa-hashtag"></i>&nbsp;{{ textchannels[selectedchannel].name }}
+          <i class="far fa-hashtag"></i>&nbsp;{{ textchannels[selectedchannel].name}}
         </p>
         <p
           style="
@@ -364,6 +365,9 @@ span {
   background-color: transparent;
   font-family: "Open Sans";
   font-size: 12pt;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .channelbutton:hover {
@@ -515,6 +519,7 @@ span {
 
 #menubar {
   position: sticky;
+  display: flex;
   background-color: #7289da;
   padding: 5px;
 }
@@ -670,7 +675,8 @@ span {
 
 import _ from 'underscore';
 // import { exists } from 'tauri-plugin-fs-extra-api'
-// await exists('/path/to/file')
+import {fs} from '@tauri-apps/api'
+import { BaseDirectory } from '@tauri-apps/api/fs';
 
 export default {
   name: 'App',
@@ -750,6 +756,8 @@ export default {
       this.selectedguild = guildindex
       this.guildchannels = this.guildlist[this.selectedguild].channels
       this.selectedchannel = 0
+      fs.writeTextFile("data.json", JSON.stringify({selectedserver: guildindex}), {dir: BaseDirectory.Document})
+      fs.writeTextFile
     },
 
     async getUserData(){
@@ -758,7 +766,9 @@ export default {
         switch (eventdata.t){
           case "READY":
             this.guildlist = eventdata.d.guilds
-            this.selectedguild = 0
+            var persistent = await fs.readTextFile("data.json", {dir: BaseDirectory.Document})
+            console.log(typeof JSON.parse(persistent))
+            this.selectedguild = JSON.parse(persistent).selectedserver
             this.guildchannels = this.guildlist[this.selectedguild].channels
             this.selectedchannel = 0
         }
@@ -847,6 +857,8 @@ export default {
     await this.getUserData()
 
 
+
+
   },
 
   updated() {
@@ -862,8 +874,7 @@ export default {
     channels[this.selectedchannel].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
     channels[this.selectedchannel].style.borderLeft = 'solid 3px orange'
     guildicons[this.selectedguild].style.borderRadius = '15px'
-  }
-
+  },
 
 }
 </script>

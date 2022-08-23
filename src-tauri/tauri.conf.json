@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
-  "build": {
+  "build": { 
     "beforeBuildCommand": "",
     "beforeDevCommand": "",
     "devPath": "Set automatically by Vue CLI plugin",
@@ -12,7 +12,12 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true
+      "fs": {
+        "scope": ["$DOCUMENT/*"],
+        "all": true, 
+        "readFile": true,
+        "writeFile": true
+      }
     },
     "bundle": {
       "active": true,
