@@ -675,8 +675,9 @@ span {
 
 import _ from 'underscore';
 // import { exists } from 'tauri-plugin-fs-extra-api'
-import {fs} from '@tauri-apps/api'
-import { BaseDirectory } from '@tauri-apps/api/fs';
+// import {fs} from '@tauri-apps/api'
+
+import * as store from './extpacks/new-tauri-store'
 
 export default {
   name: 'App',
@@ -756,8 +757,7 @@ export default {
       this.selectedguild = guildindex
       this.guildchannels = this.guildlist[this.selectedguild].channels
       this.selectedchannel = 0
-      fs.writeTextFile("data.json", JSON.stringify({selectedserver: guildindex}), {dir: BaseDirectory.Document})
-      fs.writeTextFile
+      store.testwrite("hello there", guildindex)
     },
 
     async getUserData(){
@@ -766,9 +766,7 @@ export default {
         switch (eventdata.t){
           case "READY":
             this.guildlist = eventdata.d.guilds
-            var persistent = await fs.readTextFile("data.json", {dir: BaseDirectory.Document})
-            console.log(typeof JSON.parse(persistent))
-            this.selectedguild = JSON.parse(persistent).selectedserver
+            this.selectedguild = 0
             this.guildchannels = this.guildlist[this.selectedguild].channels
             this.selectedchannel = 0
         }
