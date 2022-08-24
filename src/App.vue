@@ -757,7 +757,12 @@ export default {
       this.selectedguild = guildindex
       this.guildchannels = this.guildlist[this.selectedguild].channels
       this.selectedchannel = 0
-      store.testwrite("hello there", guildindex)
+      
+      await store.load()
+      store.set("selectedserver", guildindex)
+      store.set(this.guildlist[guildindex].name, guildindex)
+      await store.save()
+      console.log(store.getall())
     },
 
     async getUserData(){
