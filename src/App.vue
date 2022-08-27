@@ -679,6 +679,8 @@ import _ from 'underscore';
 
 import * as store from './extpacks/new-tauri-store'
 
+store.init({selectedserver: 0, hummus Infrastructure: 0})
+
 export default {
   name: 'App',
   components: {
@@ -762,7 +764,7 @@ export default {
       store.set("selectedserver", guildindex)
       store.set(this.guildlist[guildindex].name, guildindex)
       await store.save()
-      console.log(store.getall())
+      console.log(store.get("selectedserver"))
     },
 
     async getUserData(){
@@ -771,7 +773,9 @@ export default {
         switch (eventdata.t){
           case "READY":
             this.guildlist = eventdata.d.guilds
-            this.selectedguild = 0
+            await store.load()
+            console.log(store.get("selectedserver"))
+            this.selectedguild = store.get("selectedserver")
             this.guildchannels = this.guildlist[this.selectedguild].channels
             this.selectedchannel = 0
         }
