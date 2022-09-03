@@ -677,10 +677,6 @@ import _ from 'underscore';
 // import { exists } from 'tauri-plugin-fs-extra-api'
 // import {fs} from '@tauri-apps/api'
 
-import * as store from './extpacks/new-tauri-store'
-
-store.init({selectedserver: 0, hummus Infrastructure: 0})
-
 export default {
   name: 'App',
   components: {
@@ -696,7 +692,7 @@ export default {
       guildlist: [],
       guildchannels: [],
       selectedguild: 0,
-      selectedchannel: 0,
+      selectedchannel: undefined,
 
       guilddata: [],
 
@@ -712,6 +708,7 @@ export default {
       channelid: undefined,
       sequencing: null,
       heartbeat: undefined,
+      serveridsvisited: [],
     }
   },
   methods: {
@@ -747,6 +744,8 @@ export default {
       this.selectedchannel = channelindex
       channels[this.selectedchannel].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
       channels[this.selectedchannel].style.borderLeft = 'solid 3px orange'
+      window.localStorage.setItem(this.guildlist[this.selectedguild].id, channelindex)
+      console.log(channelindex)
     },
 
     async serverchanger(e, guildindex){
@@ -758,26 +757,48 @@ export default {
 
       this.selectedguild = guildindex
       this.guildchannels = this.guildlist[this.selectedguild].channels
-      this.selectedchannel = 0
-      
-      await store.load()
-      store.set("selectedserver", guildindex)
-      store.set(this.guildlist[guildindex].name, guildindex)
-      await store.save()
-      console.log(store.get("selectedserver"))
+
+      var schannel = window.localStorage.getItem(this.guildlist[guildindex].id)
+
+      schannel = schannel === null ? 0 : schannel
+
+      this.selectedchannel = schannel
+
+      window.localStorage.setItem("selectedserver", guildindex)
+
+      console.log(window.localStorage.getItem("selectedserver"))
+      this.serveridsvisited.push(this.guildlist[this.selectedguild].id)
+      var self = this
+      this.gatewaySocket.send(JSON.stringify({
+        op: 12,
+        t: "GUILD_SYNC",
+        d: [...self.serveridsvisited]
+      }))
     },
 
     async getUserData(){
       this.gatewaySocket.addEventListener('message', async (event) => {
+        console.log(event)
         var eventdata = JSON.parse(event.data)
         switch (eventdata.t){
           case "READY":
             this.guildlist = eventdata.d.guilds
-            await store.load()
-            console.log(store.get("selectedserver"))
-            this.selectedguild = store.get("selectedserver")
+            console.log(window.localStorage.getItem("selectedserver"))
+            this.selectedguild = window.localStorage.getItem("selectedserver")
             this.guildchannels = this.guildlist[this.selectedguild].channels
-            this.selectedchannel = 0
+            var schannel = window.localStorage.getItem(this.guildlist[this.selectedguild].id)
+
+            schannel = schannel === null ? 0 : schannel
+
+            this.selectedchannel = schannel
+            this.serveridsvisited.push(this.guildlist[this.selectedguild].id)
+           
+            var self = this
+            this.gatewaySocket.send(JSON.stringify({
+              op: 12,
+              t: "GUILD_SYNC",
+              d: [...self.serveridsvisited]
+            }))
         }
       })
     },
@@ -823,7 +844,11 @@ export default {
     this.gatewaySocket = new WebSocket("wss://hummus-stg-gateway.sys42.net/?v=6&encoding=json")
     var self = this
 
+    if (window.localStorage.getItem("selectedserver") === null){
+      window.localStorage.setItem("selectedserver", 0)
+    }
 
+    console.log(window.localStorage.getItem("selectedserver"))
 
     this.gatewaySocket.addEventListener("open", () => {
         self.gatewaySocket.send(JSON.stringify({
