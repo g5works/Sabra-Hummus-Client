@@ -566,7 +566,6 @@ export default {
       channels[this.selectedchannel].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
       channels[this.selectedchannel].style.borderLeft = 'solid 3px orange'
       window.localStorage.setItem(this.guildlist[this.selectedguild].id, channelindex)
-      console.log(channelindex)
     },
 
     async serverchanger(e, guildindex){
@@ -621,10 +620,7 @@ export default {
             }))
             break
           case "MESSAGE_CREATE":
-            console.log(eventdata)
-            console.log(eventdata.d.channel_id)
-            console.log(this.guildchannels[this.selectedchannel].id)
-            if (eventdata.d.guild_id == this.guildlist[this.selectedguild].id && eventdata.d.channel_id == this.guildchannels[this.selectedchannel].id){
+            if (eventdata.d.guild_id == this.guildlist[this.selectedguild].id && eventdata.d.channel_id == this.textchannels[this.selectedchannel].id){
               this.messages.push(eventdata.d)
             }
             
