@@ -94,197 +94,18 @@
         </p>
       </div>
       <div id="messages">
-        <div class="messagebody">
+        <div class="messagebody" v-for="message in messages" :key="message.id">
           <div
             class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
+            :style="{ backgroundImage: `url(https://hummus-stg-cdn.sys42.net/avatars/${message.author.id}/${message.author.avatar}.png?size=256)`}"
           ></div>
           <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
+            <span class="character-title">{{message.author.username}}</span>
+            <p class="message-text">{{message.content}}</p>
           </div>
         </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-        <div class="messagebody">
-          <div
-            class="message-avatar"
-            style="background-image: url('https://picsum.photos/200')"
-          ></div>
-          <div class="message-content">
-            <span class="character-title">iMacG5</span>
-            <p class="message-text">Hello there this is a message sampler</p>
-          </div>
-        </div>
-      </div>
+        
+      </div>  
       <div id="sender">
         <div class="chatarea">
           <button class="chatbutton file-send"><i class="fal fa-file-upload"></i></button>
@@ -778,7 +599,6 @@ export default {
 
     async getUserData(){
       this.gatewaySocket.addEventListener('message', async (event) => {
-        console.log(event)
         var eventdata = JSON.parse(event.data)
         switch (eventdata.t){
           case "READY":
@@ -799,6 +619,15 @@ export default {
               t: "GUILD_SYNC",
               d: [...self.serveridsvisited]
             }))
+            break
+          case "MESSAGE_CREATE":
+            console.log(eventdata)
+            console.log(eventdata.d.channel_id)
+            console.log(this.guildchannels[this.selectedchannel].id)
+            if (eventdata.d.guild_id == this.guildlist[this.selectedguild].id && eventdata.d.channel_id == this.guildchannels[this.selectedchannel].id){
+              this.messages.push(eventdata.d)
+            }
+            
         }
       })
     },
