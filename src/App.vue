@@ -566,6 +566,8 @@ export default {
       channels[this.selectedchannel].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
       channels[this.selectedchannel].style.borderLeft = 'solid 3px orange'
       window.localStorage.setItem(this.guildlist[this.selectedguild].id, channelindex)
+
+      this.messages = []
     },
 
     async serverchanger(e, guildindex){
@@ -594,6 +596,8 @@ export default {
         t: "GUILD_SYNC",
         d: [...self.serveridsvisited]
       }))
+
+      this.messages = []
     },
 
     async getUserData(){
