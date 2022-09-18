@@ -206,6 +206,7 @@ span {
   outline: none;
   resize: none;
   padding: 0px 10px;
+  font-size: 10pt;
 }
 
 .message-area::-webkit-scrollbar {
@@ -452,7 +453,7 @@ span {
 }
 
 .message-text {
-  font-size: 11pt;
+  font-size: 10pt;
   margin-top: 5px;
   white-space: pre-wrap;
   overflow-wrap: break-word;
@@ -491,7 +492,7 @@ span {
 
 <script lang="js">
 // import Marked from './components/Marked.vue'
-// import axios from 'axios'
+import axios from 'axios'
 
 
 import _ from 'underscore';
@@ -565,9 +566,16 @@ export default {
       this.selectedchannel = channelindex
       channels[this.selectedchannel].style.backgroundColor = 'rgba(0, 0, 0, 0.25)'
       channels[this.selectedchannel].style.borderLeft = 'solid 3px orange'
+      this.channelid = this.textchannels[channelindex].id
       window.localStorage.setItem(this.guildlist[this.selectedguild].id, channelindex)
-
       this.messages = []
+      
+      axios.get(`https://hummus.sys42.net/api/channels/${this.channelid}/messages?limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
+        // this.messages.push(result.data)
+        this.messages = result.data.reverse()
+      })
+      // axios.get(`https://hummus.sys42.net/api/channels/${this.channelid}/messages`)
+
     },
 
     async serverchanger(e, guildindex){
@@ -585,10 +593,10 @@ export default {
       schannel = schannel === null ? 0 : schannel
 
       this.selectedchannel = schannel
+      this.channelid = this.textchannels[schannel].id
 
       window.localStorage.setItem("selectedserver", guildindex)
 
-      console.log(window.localStorage.getItem("selectedserver"))
       this.serveridsvisited.push(this.guildlist[this.selectedguild].id)
       var self = this
       this.gatewaySocket.send(JSON.stringify({
@@ -596,7 +604,10 @@ export default {
         t: "GUILD_SYNC",
         d: [...self.serveridsvisited]
       }))
-
+      
+      axios.get(`https://hummus.sys42.net/api/channels/${this.channelid}/messages?limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
+        this.messages = result.data.reverse()
+      })
       this.messages = []
     },
 
@@ -614,6 +625,8 @@ export default {
             schannel = schannel === null ? 0 : schannel
 
             this.selectedchannel = schannel
+            this.channelid = this.textchannels[schannel].id
+            
             this.serveridsvisited.push(this.guildlist[this.selectedguild].id)
            
             var self = this
@@ -622,6 +635,9 @@ export default {
               t: "GUILD_SYNC",
               d: [...self.serveridsvisited]
             }))
+            axios.get(`https://hummus.sys42.net/api/channels/${this.channelid}/messages?limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
+              this.messages = result.data.reverse()
+            })
             break
           case "MESSAGE_CREATE":
             if (eventdata.d.guild_id == this.guildlist[this.selectedguild].id && eventdata.d.channel_id == this.textchannels[this.selectedchannel].id){
