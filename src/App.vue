@@ -94,6 +94,11 @@
         </p>
       </div>
       <div id="messages">
+        <infinite-loading direction="top" @infinite="infiniLoadHandle">
+          <div slot="spinner">Loading...</div>
+          <div slot="no-more">No more message</div>
+          <div slot="no-results">No results message</div>
+        </infinite-loading>
         <div class="messagebody" v-for="message in messages" :key="message.id">
           <div
             class="message-avatar"
@@ -104,7 +109,6 @@
             <p class="message-text">{{message.content}}</p>
           </div>
         </div>
-        <infinite-loading @infinite="infiniLoadHandle()"></infinite-loading>
       </div>  
       <div id="sender">
         <div class="chatarea">
@@ -534,8 +538,42 @@ export default {
     }
   },
   methods: {
-    infiniLoadHandle(){
+    infiniLoadHandle($state){
       console.log("bottomed out")
+      if(this.messages === null || this.messages === undefined || this.messages.length === 0){
+        axios.get(`https://hummus.sys42.net/api/channels/${this.channelid}/messages?limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
+                
+                if (result.data.length){
+                  this.messages.unshift(...result.data.reverse())
+                  $state.loaded();
+                }
+                else{
+                  $state.complete()
+                }
+                
+        })
+      }
+
+      else{
+        // https://hummus.sys42.net/api/v6/channels/909523692261834752/messages?before=1021170999828050805&limit=50
+        axios.get(`https://hummus.sys42.net/api/v6/channels/${this.channelid}/messages?before=${this.messages[0].id}&limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
+                
+                if (result.data.length){
+                  var reversedmessages = result.data.reverse()
+                  reversedmessages.pop()
+                  this.messages.unshift(...reversedmessages)
+                  $state.loaded();
+                }
+                else{
+                  $state.complete()
+                }
+                
+        })
+      }
+
+      
+      // $state.loaded()
+
     },
 
     chatresize(e) {
@@ -639,9 +677,6 @@ export default {
               t: "GUILD_SYNC",
               d: [...self.serveridsvisited]
             }))
-            axios.get(`https://hummus.sys42.net/api/channels/${this.channelid}/messages?limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
-              this.messages = result.data.reverse()
-            })
             break
           case "MESSAGE_CREATE":
             if (eventdata.d.guild_id == this.guildlist[this.selectedguild].id && eventdata.d.channel_id == this.textchannels[this.selectedchannel].id){
