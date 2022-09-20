@@ -104,7 +104,7 @@
             <p class="message-text">{{message.content}}</p>
           </div>
         </div>
-        
+        <infinite-loading @infinite="infiniLoadHandle()"></infinite-loading>
       </div>  
       <div id="sender">
         <div class="chatarea">
@@ -534,6 +534,10 @@ export default {
     }
   },
   methods: {
+    infiniLoadHandle(){
+      console.log("bottomed out")
+    },
+
     chatresize(e) {
       e.target.style.height = 'auto'
 
