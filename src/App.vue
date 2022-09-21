@@ -95,9 +95,11 @@
       </div>
       <div id="messages">
         <infinite-loading direction="top" @infinite="infiniLoadHandle">
-          <div slot="spinner">Loading...</div>
-          <div slot="no-more">No more message</div>
-          <div slot="no-results">No results message</div>
+          <div slot="spinner">
+            <svg width="50px" height="50px" class="spinny">
+              <circle class="loader" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+            </svg>
+          </div>
         </infinite-loading>
         <div class="messagebody" v-for="message in messages" :key="message.id">
           <div
@@ -492,6 +494,42 @@ span {
 .change-radius {
   border-radius: 15px;
 }
+
+@keyframes offsetting {
+  0%{
+    stroke-dasharray: 10;
+  }
+
+  50% {
+    stroke-dasharray: 80;
+  }
+
+  100%{
+    stroke-dasharray: 10;
+  }
+}
+
+.loader{
+  stroke: rgb(170, 170, 170);
+  stroke-width: 4px;
+  stroke-dasharray: 80;
+  animation: offsetting 5s linear infinite;
+}
+
+@keyframes speen{
+  from{
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinny {
+  animation: speen 5s linear infinite
+}
+
 </style>
 
 <script lang="js">
