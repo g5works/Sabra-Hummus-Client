@@ -94,11 +94,21 @@
         </p>
       </div>
       <div id="messages">
-        <infinite-loading direction="top" @infinite="infiniLoadHandle">
+        <infinite-loading direction="top" :identifier="channelid" @infinite="infiniLoadHandle">
           <div slot="spinner">
             <svg width="50px" height="50px" class="spinny">
               <circle class="loader" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
             </svg>
+          </div>
+          <div slot="no-more">
+            <div class="no-messages">
+              <p>Welcome to the top! Your finger must be tired, take a rest!</p>
+            </div>
+          </div>
+          <div slot="no-results">
+            <div class="no-messages">
+              <p>Welcome to the top! Your finger must be tired, take a rest!</p>
+            </div>
           </div>
         </infinite-loading>
         <div class="messagebody" v-for="message in messages" :key="message.id">
@@ -527,7 +537,7 @@ span {
 }
 
 .spinny {
-  animation: speen 5s linear infinite
+  animation: speen 1s linear infinite
 }
 
 </style>
@@ -583,6 +593,7 @@ export default {
                 
                 if (result.data.length){
                   this.messages.unshift(...result.data.reverse())
+                  
                   $state.loaded();
                 }
                 else{
