@@ -94,20 +94,20 @@
         </p>
       </div>
       <div id="messages">
-        <infinite-loading direction="top" :identifier="channelid" @infinite="infiniLoadHandle">
-          <div slot="spinner">
+        <infinite-loading direction="top" :identifier="channelid" @infinite="infiniLoadHandle" spinner="wavedots">
+          <!-- <div slot="spinner">
             <svg width="50px" height="50px" class="spinny">
               <circle class="loader" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
             </svg>
-          </div>
+          </div> -->
           <div slot="no-more">
             <div class="no-messages">
-              <p>Welcome to the top! Your finger must be tired, take a rest!</p>
+              <p>You have reached the top of the message history for this channel</p>
             </div>
           </div>
           <div slot="no-results">
             <div class="no-messages">
-              <p>Welcome to the top! Your finger must be tired, take a rest!</p>
+              <p>You have reached the top of the message history for this channel</p>
             </div>
           </div>
         </infinite-loading>
@@ -586,14 +586,16 @@ export default {
     }
   },
   methods: {
-    infiniLoadHandle($state){
+    async infiniLoadHandle($state){
       console.log("bottomed out")
       if(this.messages === null || this.messages === undefined || this.messages.length === 0){
-        axios.get(`https://hummus.sys42.net/api/channels/${this.channelid}/messages?limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
-                
+        await axios.get(`https://hummus.sys42.net/api/channels/${this.channelid}/messages?limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
+                console.log("messages get")
                 if (result.data.length){
+                  console.log((result.data[0].content).split(/[<>]+/))
                   this.messages.unshift(...result.data.reverse())
                   
+                  console.log(result.data.length)
                   $state.loaded();
                 }
                 else{
@@ -605,11 +607,14 @@ export default {
 
       else{
         // https://hummus.sys42.net/api/v6/channels/909523692261834752/messages?before=1021170999828050805&limit=50
-        axios.get(`https://hummus.sys42.net/api/v6/channels/${this.channelid}/messages?before=${this.messages[0].id}&limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
+        await axios.get(`https://hummus.sys42.net/api/v6/channels/${this.channelid}/messages?before=${this.messages[0].id}&limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
                 
-                if (result.data.length){
-                  var reversedmessages = result.data.reverse()
-                  reversedmessages.pop()
+                console.log("history get")
+                var reversedmessages = result.data.reverse()
+                reversedmessages.pop()
+                console.log(reversedmessages)
+                if (reversedmessages.length){
+                  console.log(reversedmessages.length)
                   this.messages.unshift(...reversedmessages)
                   $state.loaded();
                 }
