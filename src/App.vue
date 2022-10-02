@@ -592,7 +592,11 @@ export default {
         await axios.get(`https://hummus.sys42.net/api/channels/${this.channelid}/messages?limit=50`, {headers: {"Authorization": `${this.token}`}}).then((result)=>{
                 console.log("messages get")
                 if (result.data.length){
-                  console.log((result.data[0].content).split(/[<>]+/))
+                  var first_message = (result.data[0].content).split(/[<>]+/)
+                  console.log(first_message)
+
+                  var index = 0
+                  console.log(first_message.forEach((item) => {item.includes('@'); index++; return index}))
                   this.messages.unshift(...result.data.reverse())
                   
                   console.log(result.data.length)
